@@ -1,0 +1,30 @@
+.play-area {
+  display: flex;
+  flex-direction: row;
+}
+
+.character-area {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 45%;
+  text-align: center;
+}
+
+button {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80px;
+}
+
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 400px;
+  height: 400px;
+}
+
+body {
+  width: 100vw;
+}

@@ -4,9 +4,24 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width initial-scale=1.0" />
     <title>Intro to Redux</title>
-    <script defer src="/index.js"></script>
+    <link rel="stylesheet" href="./style.css" />
+    <script defer src="./bundle.js"></script>
   </head>
   <body>
-    <div id="app"></div>
+    <div class="play-area">
+      <span class="character-area" id="enemy">
+        <h1>Trogdor</h1>
+        <h2>Health: <span id="enemyHealth">1000</span></h2>
+        <button id="enemyAttack">Attack</button>
+        <img src="./trogdor.png">
+      </span>
+      <span class="character-area" id="mac">
+        <h1>Mac</h1>
+        <h2>Health: <span id="macHealth">400</span></h2>
+        <button id="macAttack">Attack</button>
+        <button id="heal">Heal</button>
+        <img src="./mac.png">
+      </span>
+    </div>
   </body>
 </html>
