@@ -65,6 +65,78 @@ const store = createStore(reducer);
 // Well what is it?
 console.log(store);
 
+import React from 'react';
+import { Provider, connect } from 'react-redux';
+import ReactDOM from 'react-dom';
+
+class Game extends React.Component {
+  constructor(props) {
+    super(props);
+    this.enemyAttacks = this.enemyAttacks.bind(this);
+    this.iAttack = this.iAttack.bind(this);
+    this.iHeal = this.iHeal.bind(this);
+  }
+  enemyAttacks() {
+    this.props.enemyAttacks(100);
+  }
+
+  iAttack() {
+    this.props.iAttack(100);
+  }
+
+  iHeal() {
+    this.props.iHeal(100);
+  }
+
+  render() {
+    return (
+      <div className='play-area'>
+        <span className='character-area'>
+          <h1>Trogdor</h1>
+          <h2>
+            Health: <span>{this.props.enemyHealth}</span>
+          </h2>
+          <button onClick={this.enemyAttacks}>Attack</button>
+          <img src='./trogdor.png' />
+        </span>
+        <span className='character-area'>
+          <h1>Mac</h1>
+          <h2>
+            Health: <span>{this.props.macHealth}</span>
+          </h2>
+          <button onClick={this.iAttack}>Attack</button>
+          <button onClick={this.iHeal}>Heal</button>
+          <img src='./mac.png' />
+        </span>
+      </div>
+    );
+  }
+}
+
+const mapStateToProps = (state) => {
+  return {
+    enemyHealth: state.enemyHealth,
+    macHealth: state.macHealth,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    enemyAttacks: (damage) => dispatch(trogdorAttacks(damage)),
+    iAttack: (damage) => dispatch(macAttacks(damage)),
+    iHeal: (health) => dispatch(heal(health)),
+  };
+};
+
+const ConnectedGame = connect(mapStateToProps, mapDispatchToProps)(Game);
+
+ReactDOM.render(
+  <Provider store={store}>
+    <ConnectedGame />
+  </Provider>,
+  document.getElementById('app')
+);
+
 /**
 METHODS that exist on the store object
 - dispatch - a method that accepts an ACTION as an argument and sends this action to the store's reducer
@@ -73,42 +145,43 @@ METHODS that exist on the store object
  */
 
 // The initial store state
-console.log('initial state: ', store.getState());
+// console.log('initial state: ', store.getState());
 
-// Here I am going to set up the DOM elements
-const macHealth = document.getElementById('macHealth');
-const enemyHealth = document.getElementById('enemyHealth');
+// // Here I am going to set up the DOM elements
+// const macHealth = document.getElementById('macHealth');
+// const enemyHealth = document.getElementById('enemyHealth');
 
-// Now we can subscribe to store changes. Think of this as an event listener on the store changes
-// It returns a "listener" that can unsubscribe from the store!
-const unsubscriber = store.subscribe(() => {
-  const state = store.getState();
-  macHealth.innerText = state.macHealth;
-  enemyHealth.innerText = state.enemyHealth;
-});
+// // Now we can subscribe to store changes. Think of this as an event listener on the store changes
+// // It returns a "listener" that can unsubscribe from the store!
+// const unsubscriber = store.subscribe(() => {
+//   const state = store.getState();
+//   macHealth.innerText = state.macHealth;
+//   enemyHealth.innerText = state.enemyHealth;
+// });
 
-// Now I need to set up my event handlers for the buttons
+// // Now I need to set up my event handlers for the buttons
 
-document.getElementById('enemyAttack').addEventListener('click', () => {
-  console.log('Trogdor Attacks!');
-  store.dispatch(trogdorAttacks(100));
-  // We should replace our directly used action types with the action creators now!
-  // store.dispatch({ type: TROGDOR_ATTACKS, damage: 100 });
+// document.getElementById('enemyAttack').addEventListener('click', () => {
+//   console.log('Trogdor Attacks!');
+//   store.dispatch(trogdorAttacks(100));
+//   // We should replace our directly used action types with the action creators now!
+//   // store.dispatch({ type: TROGDOR_ATTACKS, damage: 100 });
 
-  // We should replace our string action types with our variable action types now!
-  // store.dispatch({ type: 'trogdor attacks', damage: 100 });
-});
+//   // We should replace our string action types with our variable action types now!
+//   // store.dispatch({ type: 'trogdor attacks', damage: 100 });
+// });
 
-document.getElementById('macAttack').addEventListener('click', () => {
-  console.log('Mac Attacks!');
-  store.dispatch(macAttacks(100));
-  // store.dispatch({ type: MAC_ATTACKS, damage: 100 });
-  // store.dispatch({ type: 'mac attacks', damage: 100 });
-});
+// document.getElementById('macAttack').addEventListener('click', () => {
+//   console.log('Mac Attacks!');
+//   store.dispatch(macAttacks(100));
+//   // store.dispatch({ type: MAC_ATTACKS, damage: 100 });
+//   // store.dispatch({ type: 'mac attacks', damage: 100 });
+// });
 
-document.getElementById('heal').addEventListener('click', () => {
-  console.log('Mac Heals!');
-  store.dispatch(heal(100));
-  // store.dispatch({ type: HEAL, heal: 200 });
-  // store.dispatch({ type: 'heal', heal: 200 });
-});
+// document.getElementById('heal').addEventListener('click', () => {
+//   console.log('Mac Heals!');
+//   store.dispatch(heal(100));
+//   // store.dispatch({ type: HEAL, heal: 200 });
+//   // store.dispatch({ type: 'heal', heal: 200 });
+// });
+
