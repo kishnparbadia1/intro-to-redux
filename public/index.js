@@ -66,26 +66,38 @@ const store = createStore(reducer);
 console.log(store);
 
 import React from 'react';
-import { Provider, connect } from 'react-redux';
 import ReactDOM from 'react-dom';
 
 class Game extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      enemyHealth: initialState.enemyHealth,
+      macHealth: initialState.macHealth,
+    };
     this.enemyAttacks = this.enemyAttacks.bind(this);
     this.iAttack = this.iAttack.bind(this);
     this.iHeal = this.iHeal.bind(this);
   }
+
+  componentDidMount() {
+    const storeSubscribe = store.subscribe(() => {
+      this.setState({
+        ...store.getState(),
+      });
+    });
+  }
+
   enemyAttacks() {
-    this.props.enemyAttacks(100);
+    store.dispatch(trogdorAttacks(100));
   }
 
   iAttack() {
-    this.props.iAttack(100);
+    store.dispatch(macAttacks(100));
   }
 
   iHeal() {
-    this.props.iHeal(100);
+    store.dispatch(heal(100));
   }
 
   render() {
@@ -94,7 +106,7 @@ class Game extends React.Component {
         <span className='character-area'>
           <h1>Trogdor</h1>
           <h2>
-            Health: <span>{this.props.enemyHealth}</span>
+            Health: <span>{this.state.enemyHealth}</span>
           </h2>
           <button onClick={this.enemyAttacks}>Attack</button>
           <img src='./trogdor.png' />
@@ -102,7 +114,7 @@ class Game extends React.Component {
         <span className='character-area'>
           <h1>Mac</h1>
           <h2>
-            Health: <span>{this.props.macHealth}</span>
+            Health: <span>{this.state.macHealth}</span>
           </h2>
           <button onClick={this.iAttack}>Attack</button>
           <button onClick={this.iHeal}>Heal</button>
@@ -113,29 +125,7 @@ class Game extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    enemyHealth: state.enemyHealth,
-    macHealth: state.macHealth,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    enemyAttacks: (damage) => dispatch(trogdorAttacks(damage)),
-    iAttack: (damage) => dispatch(macAttacks(damage)),
-    iHeal: (health) => dispatch(heal(health)),
-  };
-};
-
-const ConnectedGame = connect(mapStateToProps, mapDispatchToProps)(Game);
-
-ReactDOM.render(
-  <Provider store={store}>
-    <ConnectedGame />
-  </Provider>,
-  document.getElementById('app')
-);
+ReactDOM.render(<Game />, document.getElementById('app'));
 
 /**
 METHODS that exist on the store object
