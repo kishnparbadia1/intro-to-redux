@@ -116,11 +116,15 @@ class Game extends React.Component {
   }
 
   componentDidMount() {
-    const storeSubscribe = store.subscribe(() => {
+    this.storeSubscribe = store.subscribe(() => {
       this.setState({
         ...store.getState(),
       });
     });
+  }
+
+  componentWillUnmount() {
+    this.storeSubscribe();
   }
 
   enemyAttacks() {
