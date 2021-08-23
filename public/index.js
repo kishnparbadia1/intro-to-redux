@@ -17,6 +17,8 @@
  * }
  */
 
+// This will be in your app/store/store.js
+
 // First thing's first, let's create action types
 // Action types --- they're just strings
 const TROGDOR_ATTACKS = 'Trogdor Attacks';
@@ -100,44 +102,48 @@ const store = createStore(reducer);
 
 console.log('store', store);
 
+// This will typically be in /app/components/Game.js(x)
+
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider, connect } from 'react-redux';
 
 class Game extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      enemyHealth: initialState.enemyHealth,
-      macHealth: initialState.macHealth,
-    };
-    this.enemyAttacks = this.enemyAttacks.bind(this);
-    this.iAttack = this.iAttack.bind(this);
-    this.iHeal = this.iHeal.bind(this);
-  }
+  // constructor(props) {
+  //   super(props);
+  //   // this.state = {
+  //   //   enemyHealth: initialState.enemyHealth,
+  //   //   macHealth: initialState.macHealth,
+  //   // };
+  //   // this.enemyAttacks = this.enemyAttacks.bind(this);
+  //   // this.iAttack = this.iAttack.bind(this);
+  //   // this.iHeal = this.iHeal.bind(this);
+  // }
 
-  componentDidMount() {
-    this.storeSubscribe = store.subscribe(() => {
-      this.setState({
-        ...store.getState(),
-      });
-    });
-  }
+  // componentDidMount() {
+  //   this.storeSubscribe = store.subscribe(() => {
+  //     this.setState({
+  //       ...store.getState(),
+  //     });
+  //   });
+  // }
 
-  componentWillUnmount() {
-    this.storeSubscribe();
-  }
+  // componentWillUnmount() {
+  //   // unsubscribe from the store
+  //   this.storeSubscribe();
+  // }
 
-  enemyAttacks() {
-    store.dispatch(trogdorAttacks(100));
-  }
+  // enemyAttacks() {
+  //   store.dispatch(trogdorAttacks(100));
+  // }
 
-  iAttack() {
-    store.dispatch(macAttacks(100));
-  }
+  // iAttack() {
+  //   store.dispatch(macAttacks(100));
+  // }
 
-  iHeal() {
-    store.dispatch(macHeals(100));
-  }
+  // iHeal() {
+  //   store.dispatch(macHeals(100));
+  // }
 
   render() {
     return (
@@ -145,18 +151,19 @@ class Game extends React.Component {
         <span className='character-area'>
           <h1>Trogdor</h1>
           <h2>
-            Health: <span>{this.state.enemyHealth}</span>
+            Health: <span>{this.props.enemyHealth}</span>
           </h2>
-          <button onClick={this.enemyAttacks}>Attack</button>
+          {/* <button onClick={this.enemyAttacks}>Attack</button> */}
+          <button onClick={this.props.enemyAttacks}>Attack</button>
           <img src='./trogdor.png' />
         </span>
         <span className='character-area'>
           <h1>Mac</h1>
           <h2>
-            Health: <span>{this.state.macHealth}</span>
+            Health: <span>{this.props.macHealth}</span>
           </h2>
-          <button onClick={this.iAttack}>Attack</button>
-          <button onClick={this.iHeal}>Heal</button>
+          <button onClick={() => this.props.iAttack(100)}>Attack</button>
+          <button onClick={() => this.props.iHeal(100)}>Heal</button>
           <img src='./mac.png' />
         </span>
       </div>
@@ -164,7 +171,57 @@ class Game extends React.Component {
   }
 }
 
-ReactDOM.render(<Game />, document.getElementById('app'));
+// this is what the react-redux library does for us.
+// store.subscribe(() => {
+//   const state = store.getState();
+//   const props = component.mapStateToProps(state);
+//    component.props = {...props}
+// })
+
+// Takes our store state and puts pieces of it on component props
+const mapStateToProps = (state) => {
+  /**
+   * my props:
+   * {
+   *  macHealth: synchronized to my store state health
+   *  enemyHealth: synchronized to my store state enemy health
+   * }
+   *
+   * I can access these in my component with
+   *  this.props.macHealth
+   *  this.props.enemyHealth
+   */
+  return {
+    // whateverKey: 'something random',
+    macHealth: state.macHealth,
+    enemyHealth: state.enemyHealth,
+  };
+};
+// Here, we are going to create methods for our component to call to dispatch actions to the store
+const mapDispatchToProps = (dispatch) => {
+  return {
+    enemyAttacks: () => dispatch(trogdorAttacks(100)),
+    iAttack: (damage) => dispatch(macAttacks(damage)),
+    iHeal: (heal) => dispatch(macHeals(heal)),
+  };
+};
+
+// This "connect" function is going to link our redux store to our component
+// export default connect(mapStateToProps, mapDispatchToProps)(Game);
+const ConnectedGame = connect(mapStateToProps, mapDispatchToProps)(Game);
+
+
+// This will typically be in /app/index.js
+
+// We need a Provider component from 'react-redux' that takes in our store as a property. This component basically signals that our app is ready to connect React Components to our Redux store
+ReactDOM.render(
+  <Provider store={store}>
+    <ConnectedGame />
+  </Provider>,
+  document.getElementById('app')
+);
+
+// This is the old garbage way :vomit:
 
 /**
  * Store has 3 major methods that we want to use
