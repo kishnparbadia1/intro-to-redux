@@ -48,6 +48,11 @@ const mapStateToProps = (storeState) => {
 // mapDispatchToProps gives you the dispatch method and lets you use it on your props
 const mapDispatchToProps = (dispatch) => {
   console.log('inside mapDispatchToProps');
+  /**
+   * props.trogdorAttacks(damage)
+   * props.macAttacks(damage)
+   * props.macHeals(damage)
+   */
   return {
     trogdorAttacks: (damage) => dispatch(trogdorAttacksAction(damage)),
     macAttacks: (damage) => dispatch(macAttacksAction(damage)),
